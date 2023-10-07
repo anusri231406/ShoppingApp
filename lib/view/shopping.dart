@@ -91,6 +91,22 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+class CartItem {
+  final String cartImage;
+  final String cartName;
+  final String cartPrice;
+  int quantity;
+  
+  var name;
+
+  CartItem({
+    required this.cartImage,
+    required this.cartName,
+    required this.cartPrice,
+    this.quantity = 1,
+  });
+}
+
 class Project2 extends StatefulWidget {
   const Project2({super.key});
 
@@ -141,7 +157,7 @@ class _Project2State extends State<Project2> {
   @override
   Widget build(BuildContext context) {
     var index=0;
-   
+    bool isItemInCart = false;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
@@ -167,10 +183,97 @@ class _Project2State extends State<Project2> {
       });
     }
 
+    List<CartItem> cartItems=[];
+    // var image;
+    // var name;
+    // var price;
+    var count=0;
+    void displayCartItem(){
+        cartItems.forEach((element) {print("item =${element.cartName}");});
+      }
+      void addToCart() {
+         print("items are added ${imagelist[index]},${namelist[index]},${pricelist}");
+        setState(() {
+          isItemInCart = true;
+          
+          CartItem product = CartItem(
+            cartImage:imagelist[index], 
+            cartName: namelist[index], 
+            cartPrice: pricelist[index],
+            quantity: count);
+         
+        //print("items are added");
+        cartItems.add(product);
+        print("is cart item=${isItemInCart}");
+
+         displayCartItem();
+
+        //print('new:${cartItems}');
+
+        //totalitem+=1;
+          // cartName.add('${widget.name}');
+          // cartImage.add('${widget.image}');
+          // cartPrice.add('${widget.price}');
+          // cartQuantity.add(count);
+
+          // print('new :${cartName}');
+          // print('new :${cartImage}');
+        });
+      }
+
+      void removeFromCart() {
+        print("removed index ${index}");
+        if (isItemInCart) {
+          setState(() {
+            isItemInCart = false;
+            // CartItem product = CartItem(
+            // cartImage:image[index], 
+            // cartName: name[index], 
+            // cartPrice: price[index],
+            // quantity: count);
+         
+
+        //cartItems.removeAt(index);
+        cartItems.clear();
+            // cartName.removeAt(index);
+            // cartImage.remove(index);
+            // cartPrice.removeAt(index);
+            // cartQuantity.removeAt(index);
+          });
+        }
+      }
+
+      void toggle(){
+        if (!isItemInCart) {
+          addToCart();
+
+        } 
+        else {
+          removeFromCart();
+        }
+      }
+
+      
+
+      void increment() {
+        setState(() {
+          count++;
+        });
+      }
+
+      void decrement() {
+        if (count > 1) {
+          setState(() {
+            count--;
+          });
+        }
+      }
+
+
 
     Widget makeSCard (String image, String name, String price,index){
       return GestureDetector(
-        onTap:(){Navigator.push(context, MaterialPageRoute(builder: (context) => DetailedPage(name: namelist[index],image:imagelist[index],price:pricelist[index])));} ,
+        onTap:(){Navigator.push(context, MaterialPageRoute(builder: (context) => DetailedPage(name: namelist[index],image:imagelist[index],price:pricelist[index],toggle:(){toggle();},increment: (){increment();},decrement: (){decrement();},)));} ,
         child: Card(          
           child: Column(
             children: [
@@ -230,7 +333,7 @@ class _Project2State extends State<Project2> {
     Widget make2ndCard (String image, String name, String price, index){
       return GestureDetector(
         onTap:(){print('new ${index}');
-          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailedPage(name:namelist[index],image:imagelist[index],price:pricelist[index])));} ,
+          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailedPage(name:namelist[index],image:imagelist[index],price:pricelist[index],toggle:(){toggle();},increment: (){increment();},decrement: (){decrement();},)));} ,
         child: Card(        
           child: Column(
             children: [
@@ -404,6 +507,7 @@ class _Project2State extends State<Project2> {
   }
 }
 
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -546,17 +650,17 @@ class _LoginState extends State<Login> {
   }
 }
 
+
+
+
 class DetailedPage extends StatefulWidget {
   var image;
-  
   var name;
-  
   var price;
-
-  // List name;
-  // List price;
-  // List image;
-  DetailedPage({super.key, required this. image, required this. name, required this. price,  });
+  VoidCallback toggle;
+  VoidCallback increment;
+  VoidCallback decrement;
+  DetailedPage({super.key, required this. image, required this. name, required this. price,required this.toggle, required this.decrement,required this.increment  });
 
   @override
   State<DetailedPage> createState() => _DetailedPageState();
@@ -565,49 +669,129 @@ class DetailedPage extends StatefulWidget {
 class _DetailedPageState extends State<DetailedPage> {
   bool isItemInCart = false;
   int count = 1;
+  
+  var  index =0;
+  int totalitem=0;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    //  List cartName = [];
+    //  List cartImage=[];
+    //  List cartPrice=[];
+    //  List cartQuantity=[];
+
+    // List<CartItem> cartItems=[];
+    // // var image;
+    // // var name;
+    // // var price;
+    // void displayCartItem(){
+    //     cartItems.forEach((element) {print("item =${element.cartName}");});
+    //   }
+    //   void addToCart() {
+    //      print("items are added ${widget.image[index]},${widget.name[index]},${widget.price}");
+    //     setState(() {
+    //       isItemInCart = true;
+          
+    //       CartItem product = CartItem(
+    //         cartImage:widget.image, 
+    //         cartName: widget.name, 
+    //         cartPrice: widget.price,
+    //         quantity: count);
+         
+    //     //print("items are added");
+    //     cartItems.add(product);
+    //     print("is cart item=${isItemInCart}");
+
+    //      displayCartItem();
+
+    //     //print('new:${cartItems}');
+
+    //     //totalitem+=1;
+    //       // cartName.add('${widget.name}');
+    //       // cartImage.add('${widget.image}');
+    //       // cartPrice.add('${widget.price}');
+    //       // cartQuantity.add(count);
+
+    //       // print('new :${cartName}');
+    //       // print('new :${cartImage}');
+    //     });
+    //   }
+
+    //   void removeFromCart() {
+    //     print("removed index ${index}");
+    //     if (isItemInCart) {
+    //       setState(() {
+    //         isItemInCart = false;
+    //         // CartItem product = CartItem(
+    //         // cartImage:image[index], 
+    //         // cartName: name[index], 
+    //         // cartPrice: price[index],
+    //         // quantity: count);
+         
+
+    //     //cartItems.removeAt(index);
+    //     cartItems.clear();
+    //         // cartName.removeAt(index);
+    //         // cartImage.remove(index);
+    //         // cartPrice.removeAt(index);
+    //         // cartQuantity.removeAt(index);
+    //       });
+    //     }
+    //   }
+
+      
      
-      void addToCart() {
-        setState(() {
-          isItemInCart = true;
-        });
-      }
+//       void toggle(int index) {
+//   setState(() {
+//     var imagelist;
+//     var namelist;
+//     var pricelist;
+//     final product = CartItem(
+//       cartImage: imagelist[index],
+//       cartName: namelist[index],
+//       cartPrice: pricelist[index],
+//     );
 
-      void removeFromCart() {
-        if (isItemInCart) {
-          setState(() {
-            isItemInCart = false;
-          });
-        }
-      }
+//     final existingItem = cartItems.firstWhere(
+//       (item) => item.name == product.name,
+//       //orElse: () => null,
+//     );
 
-      void toggle(){
-        if (!isItemInCart) {
-          addToCart();
-        } 
-        else {
-          removeFromCart();
-        }
-      }
+//     if (existingItem != null) {
+//       existingItem.quantity++;
+//     } else {
+//       cartItems.add(product);
+//     }
+//   });
+// }
+
+
+      // void toggle(){
+      //   if (!isItemInCart) {
+      //     addToCart();
+
+      //   } 
+      //   else {
+      //     removeFromCart();
+      //   }
+      // }
 
       
 
-      void increment() {
-        setState(() {
-          count++;
-        });
-      }
+      // void increment() {
+      //   setState(() {
+      //     count++;
+      //   });
+      // }
 
-      void decrement() {
-        if (count > 1) {
-          setState(() {
-            count--;
-          });
-        }
-      }
+      // void decrement() {
+      //   if (count > 1) {
+      //     setState(() {
+      //       count--;
+      //     });
+      //   }
+      // }
 
 
     return Scaffold(
@@ -618,25 +802,29 @@ class _DetailedPageState extends State<DetailedPage> {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right:14.0),
-          child: Stack(children: [
-            IconButton(onPressed: (){
-              toggle();
-              // if (!isItemInCart) {
-              //     addToCart();
-              //   } else {
-              //     removeFromCart();
-              //   }
-            }, icon: Icon(isItemInCart ? Icons.shopping_cart: Icons.shopping_cart_outlined,color: Colors.white,) ),
-            Positioned(
-          top: 0,
-          right: 0,
-          
-          child: CircleAvatar(
-            backgroundColor: Colors.red,
-            radius: 11.0,
-            child: Align(alignment: Alignment.center,child: Text(isItemInCart ?'1':'0',textAlign: TextAlign.center,style: TextStyle(color: Colors.white),))))
+          child: GestureDetector(onTap:(){
+           
+          //   Navigator.push(context, MaterialPageRoute
+          // (builder: (context) => Cart(
+          //   //cartImage:cartImage,cartName:cartName,cartPrice:cartPrice,cartQuantity:cartQuantity
+          //   )));
+          } ,
+            child: Stack(children: [
+              IconButton(onPressed: (){
+                //toggle();
+                //displayCartItem();
+              }, icon: Icon(isItemInCart ? Icons.shopping_cart: Icons.shopping_cart_outlined,color: Colors.white,) ),
+              Positioned(
+            top: 0,
+            right: 0,
             
-            ] ),
+            child: CircleAvatar(
+              backgroundColor: Colors.red,
+              radius: 11.0,
+              child: Align(alignment: Alignment.center,child: Text(isItemInCart ?'1':'0',textAlign: TextAlign.center,style: TextStyle(color: Colors.white),))))
+              
+              ] ),
+          ),
         )
       ],
       ),
@@ -735,7 +923,7 @@ class _DetailedPageState extends State<DetailedPage> {
                           height:height* 0.1,
                           width: width*0.17,
                           child: ElevatedButton(
-                            onPressed: decrement,
+                            onPressed:widget. decrement,
                             child: Text('-',style: TextStyle(fontSize: 40,fontWeight: FontWeight.bold,color: Colors.white),),
                             style: ElevatedButton.styleFrom(    
                             shape: RoundedRectangleBorder(      
@@ -762,7 +950,7 @@ class _DetailedPageState extends State<DetailedPage> {
                           height:height* 0.1,
                           width: width*0.17,
                           child: ElevatedButton(
-                            onPressed: increment,
+                            onPressed: widget. increment,
                             child: Text('+',style: TextStyle(fontSize: 40,fontWeight: FontWeight.bold,color: Colors.white)),
                             style: ElevatedButton.styleFrom(    
                             shape: RoundedRectangleBorder(      
@@ -786,7 +974,7 @@ class _DetailedPageState extends State<DetailedPage> {
                       right: 2,
                       top: 8),
                     child: ElevatedButton(onPressed: (){
-                      toggle();
+                      widget.toggle();
                     }, 
                     child: Text(isItemInCart ? 'Remove from Cart' :'Add To Cart',textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 20),),
                     style: ElevatedButton.styleFrom(    
@@ -801,6 +989,91 @@ class _DetailedPageState extends State<DetailedPage> {
         ]),
       ),
 
+    );
+  }
+}
+
+class Cart extends StatefulWidget {
+  // var cartImage;
+  // var cartName;
+  // var cartPrice;
+  // var cartQuantity;
+  Cart({super.key, 
+  //required this. cartImage, required this.cartName, required this. cartPrice, required this. cartQuantity
+  });
+
+  @override
+  State<Cart> createState() => _CartState();
+}
+
+class _CartState extends State<Cart> {
+  @override
+  Widget build(BuildContext context) {
+  var height = MediaQuery.of(context).size.height;
+  var width = MediaQuery.of(context).size.width;
+
+  Widget smallCard(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: Container(
+          height: height*0.12,
+          width: width*0.95,
+          // child: ListTile(
+          //   leading:Container() ,
+          //   title: Text('vksms'),
+          //   subtitle: Text('ffokfo'),
+          //   trailing: IconButton(onPressed: (){}, icon: Icon(Icons.delete)),
+      
+          // ),
+          child: Row(
+            children: [
+              SizedBox(width: 10,),
+              //image
+              Container(
+                height: height*0.1,
+                width: width*0.3,
+                decoration: BoxDecoration(image: DecorationImage(image:NetworkImage(''
+                  //'${widget.cartImage}'
+                  ),fit: BoxFit.cover )),
+              ),
+              SizedBox(width: 15,),
+              //name price quantity
+              Container(
+                height: height*0.1,
+                width: width*0.4,
+                decoration: BoxDecoration(color: Colors.amber),
+                child: Column(
+                  children: [
+                    // Text('${widget.cartName}'),
+                    // Text('${widget.cartPrice}'),
+                    // Text('${widget.cartQuantity}')
+                  ],
+                ),
+              ),
+              //icon
+              SizedBox(width:10,),
+              Container(
+                height: height*0.1,
+                width: width*0.12,
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Center(
+                  child: IconButton(onPressed: (){}, icon: Icon(Icons.delete)),
+                ),
+              ),
+            ]),
+        ),
+      ),
+    );
+  }
+
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(height: height*0.1,),
+          smallCard()
+        ],
+      ),
     );
   }
 }
